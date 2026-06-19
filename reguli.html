@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<title>Reguli</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+
+:root{
+  --bg:#0a0a0a;
+  --surface:#141414;
+  --line:#2a2a2a;
+  --text:#f3f2ee;
+  --muted:#8f8d87;
+  --red:#c8202a;
+  --red-dim:#5e1015;
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+
+html,body{
+  height:100%;
+  overflow:hidden;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+  position:relative;
+}
+
+.center{
+  position:absolute;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  text-align:center;
+  width:90%;
+  max-width:640px;
+  z-index:2;
+}
+
+h1{
+  font-family:'Anton',sans-serif;
+  font-weight:400;
+  transform:skewX(-6deg);
+  font-size:clamp(34px,6.4vw,64px);
+  line-height:1.05;
+  letter-spacing:.01em;
+  color:var(--text);
+}
+
+.sub{
+  margin-top:22px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  letter-spacing:.08em;
+  color:var(--muted);
+}
+
+#btn{
+  position:fixed;
+  top:0; left:0;
+  opacity:0;
+  z-index:1;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--red);
+  background:transparent;
+  border:1px solid var(--red);
+  border-radius:3px;
+  padding:9px 16px;
+  cursor:pointer;
+  transition:top .28s cubic-bezier(.34,1.56,.64,1),
+             left .28s cubic-bezier(.34,1.56,.64,1),
+             color .2s ease,
+             border-color .2s ease,
+             background .2s ease,
+             opacity .2s ease;
+}
+
+#btn:hover{
+  color:var(--red);
+  border-color:var(--red);
+  background:var(--red-dim);
+}
+
+</style>
+</head>
+<body>
+
+  <div class="center" id="main">
+    <h1>N-avem.<br>Doar nu fi ratat.</h1>
+    <div class="sub" id="subwrap" style="position:relative;">Dacă ești totuși,</div>
+  </div>
+
+  <button id="btn">apasă aici</button>
+
+<script>
+const btn = document.getElementById('btn');
+
+function placeInitial(){
+  const sub = document.getElementById('subwrap').getBoundingClientRect();
+  const w = btn.offsetWidth || 120;
+  const h = btn.offsetHeight || 34;
+  btn.style.transition = 'none';
+  btn.style.left = (sub.right + 10) + 'px';
+  btn.style.top = (sub.top + sub.height/2 - h/2) + 'px';
+  btn.style.opacity = '1';
+  requestAnimationFrame(()=> btn.style.transition = '');
+}
+
+function moveAway(){
+  const w = btn.offsetWidth;
+  const h = btn.offsetHeight;
+  const maxX = window.innerWidth - w - 20;
+  const maxY = window.innerHeight - h - 20;
+  const x = Math.max(20, Math.random() * maxX);
+  const y = Math.max(20, Math.random() * maxY);
+  btn.style.left = x + 'px';
+  btn.style.top = y + 'px';
+}
+
+btn.addEventListener('mouseenter', () => {
+  moveAway();
+});
+
+btn.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  moveAway();
+});
+
+window.addEventListener('resize', placeInitial);
+window.addEventListener('load', placeInitial);
+placeInitial();
+
+// fuge si cand cursorul doar se apropie, nu doar la hover direct
+const dodgeRadius = 90;
+window.addEventListener('mousemove', (e) => {
+  const r = btn.getBoundingClientRect();
+  const cx = r.left + r.width/2;
+  const cy = r.top + r.height/2;
+  const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
+  if (dist < dodgeRadius){
+    moveAway();
+  }
+});
+</script>
+
+</body>
+</html>
